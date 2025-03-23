@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1,
+    "name": "Ivan",
+    "position": 1,
+    "wentHome": 0,
+    "lastVolunteer": null
+  },
+  {
+    "id": 2,
+    "name": "Eric",
+    "position": 2,
+    "wentHome": 0,
+    "lastVolunteer": null
+  },
+  {
+    "id": 3,
+    "name": "Ben",
+    "position": 3,
+    "wentHome": 0,
+    "lastVolunteer": null
+  },
+  {
+    "id": 4,
+    "name": "Anthony",
+    "position": 4,
+    "wentHome": 0,
+    "lastVolunteer": null
+  },
+  {
+    "id": 5,
+    "name": "Kevin",
+    "position": 5,
+    "wentHome": 0,
+    "lastVolunteer": null
+  },
+  {
+    "id": 6,
+    "name": "Doug",
+    "position": 6,
+    "wentHome": 1,
+    "lastVolunteer": null
+  },
+  {
+    "id": 7,
+    "name": "Nathan",
+    "position": 7,
+    "wentHome": 1,
+    "lastVolunteer": null
+  }
+]
