@@ -16,7 +16,7 @@ This is the backend for the **Volunteer Queue App** — a lightweight Node.js AP
 
 ## 🚀 Getting Started
 
-**THIS IS BACKEND -the frontend MUST be running also.
+**THIS IS BACKEND -the frontend MUST be running also (https://github.com/ChronoKross/volunteer-frontend)
 
 ### 1. Clone the repo
 
