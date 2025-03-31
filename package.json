@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn src/index.ts",
-    "build": "tsc",
+    "build": "tsc && cp src/db/queue.json dist/db/queue.json",
     "start": "node dist/index.js"
 
   },
