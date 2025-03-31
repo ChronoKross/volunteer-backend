@@ -1,16 +1,29 @@
-import fs from "fs";
-import path from "path";
-import { Employee } from "../types/types";
+import { Request, Response } from "express";
+import { volunteerEmployee, getQueue } from "../db/queModel";
 
-const filePath = path.join(__dirname, "../db/queue.json");
+export function updateQueueController(req: Request, res: Response): void {
+  const { id } = req.body;
+  
 
-export function getQueue(): Employee[] {
-  const raw = fs.readFileSync(filePath, "utf-8");
-  return JSON.parse(raw).sort(
-    (a: Employee, b: Employee) => a.position - b.position
-  );
+  if (typeof id !== "number") {
+    res.status(400).json({ message: "Invalid or missing ID" });
+    return;
+  }
+
+  const updatedQueue = volunteerEmployee(id);
+
+  if (!updatedQueue) {
+    res.status(404).json({ message: "Employee not found" });
+    return;
+  }
+
+  res.json({
+    message: "Employee moved to back of queue.",
+    queue: updatedQueue,
+  });
 }
 
-export function saveQueue(queue: Employee[]) {
-  fs.writeFileSync(filePath, JSON.stringify(queue, null, 2));
+export function getQueueController(req: Request, res: Response): void {
+  const queue = getQueue();
+  res.json(queue);
 }

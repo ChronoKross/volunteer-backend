@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import queueRouter from "./routes/queue";
+import queueRouter from "./routes/queueRouter";
 
 const app = express();
 
