@@ -16,7 +16,7 @@ This is the backend for the **Volunteer Queue App** — a lightweight Node.js AP
 
 ## 🚀 Getting Started
 
-**Remember the frontend must be running also. 
+**the frontend must also be running. 
 
 ### 1. Clone the repo
 
