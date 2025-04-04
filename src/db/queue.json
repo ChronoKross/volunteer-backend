@@ -1,51 +1,58 @@
 [
   {
-    "id": 7,
-    "name": "Nathan",
+    "id": 3,
+    "name": "Ben",
     "position": 1,
-    "wentHome": 0,
-    "lastVolunteeredOn": "2025-03-31T06:51:15.098Z"
-  },
-  {
-    "id": 4,
-    "name": "Anthony",
-    "position": 2,
-    "wentHome": 0,
-    "lastVolunteeredOn": "2025-03-31T06:51:16.754Z"
+    "wentHome": 4,
+    "lastVolunteeredOn": "2025-04-04T06:17:54.720Z",
+    "totalTimeVolunteered": 14.14
   },
   {
     "id": 5,
     "name": "Kevin",
-    "position": 3,
-    "wentHome": 0,
-    "lastVolunteeredOn": "2025-03-31T06:51:18.137Z"
+    "position": 2,
+    "wentHome": 3,
+    "lastVolunteeredOn": "2025-04-04T06:17:57.751Z",
+    "totalTimeVolunteered": 14.236121944444445
   },
   {
-    "id": 3,
-    "name": "Ben",
+    "id": 4,
+    "name": "Anthony",
+    "position": 3,
+    "wentHome": 6,
+    "lastVolunteeredOn": "2025-04-04T06:18:31.775Z",
+    "totalTimeVolunteered": 23.490000000000002
+  },
+  {
+    "id": 6,
+    "name": "Doug",
     "position": 4,
-    "wentHome": 0,
-    "lastVolunteeredOn": "2025-03-31T07:05:36.166Z"
+    "wentHome": 1,
+    "lastVolunteeredOn": "2025-04-04T06:18:57.152Z",
+    "totalTimeVolunteered": 4.68
   },
   {
     "id": 2,
     "name": "Eric",
     "position": 5,
-    "wentHome": 0,
-    "lastVolunteeredOn": "2025-03-31T07:05:36.938Z"
+    "wentHome": 2,
+    "lastVolunteeredOn": "2025-04-04T06:19:32.118Z",
+    "totalTimeVolunteered": 16.67
   },
   {
-    "id": 6,
-    "name": "Doug",
+    "id": 7,
+    "name": "Nathan",
     "position": 6,
-    "wentHome": 0,
-    "lastVolunteeredOn": "2025-03-31T07:09:54.725Z"
+    "wentHome": 5,
+    "lastVolunteeredOn": "2025-04-04T07:28:43.189Z",
+    "totalTimeVolunteered": 27.759999999999998
   },
   {
     "id": 1,
     "name": "Ivan",
     "position": 7,
-    "wentHome": 0,
-    "lastVolunteeredOn": "2025-03-31T07:09:58.094Z"
+    "wentHome": 2,
+    "lastVolunteeredOn": "2025-04-04T07:28:43.702Z",
+    "totalTimeVolunteered": 8.19
   }
 ]
