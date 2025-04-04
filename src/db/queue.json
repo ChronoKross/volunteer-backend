@@ -3,56 +3,56 @@
     "id": 3,
     "name": "Ben",
     "position": 1,
-    "wentHome": 4,
-    "lastVolunteeredOn": "2025-04-04T06:17:54.720Z",
-    "totalTimeVolunteered": 14.14
+    "wentHome": 5,
+    "lastVolunteeredOn": "2025-04-04T09:06:07.313Z",
+    "totalTimeVolunteered": 16.04
   },
   {
     "id": 5,
     "name": "Kevin",
     "position": 2,
-    "wentHome": 3,
-    "lastVolunteeredOn": "2025-04-04T06:17:57.751Z",
-    "totalTimeVolunteered": 14.236121944444445
+    "wentHome": 4,
+    "lastVolunteeredOn": "2025-04-04T09:06:08.009Z",
+    "totalTimeVolunteered": 16.136121944444444
   },
   {
     "id": 4,
     "name": "Anthony",
     "position": 3,
-    "wentHome": 6,
-    "lastVolunteeredOn": "2025-04-04T06:18:31.775Z",
-    "totalTimeVolunteered": 23.490000000000002
+    "wentHome": 7,
+    "lastVolunteeredOn": "2025-04-04T09:06:08.573Z",
+    "totalTimeVolunteered": 25.39
   },
   {
     "id": 6,
     "name": "Doug",
     "position": 4,
-    "wentHome": 1,
-    "lastVolunteeredOn": "2025-04-04T06:18:57.152Z",
-    "totalTimeVolunteered": 4.68
+    "wentHome": 2,
+    "lastVolunteeredOn": "2025-04-04T09:06:09.120Z",
+    "totalTimeVolunteered": 6.58
   },
   {
     "id": 2,
     "name": "Eric",
     "position": 5,
-    "wentHome": 2,
-    "lastVolunteeredOn": "2025-04-04T06:19:32.118Z",
-    "totalTimeVolunteered": 16.67
+    "wentHome": 3,
+    "lastVolunteeredOn": "2025-04-04T09:06:09.741Z",
+    "totalTimeVolunteered": 18.57
   },
   {
     "id": 7,
     "name": "Nathan",
     "position": 6,
-    "wentHome": 5,
-    "lastVolunteeredOn": "2025-04-04T07:28:43.189Z",
-    "totalTimeVolunteered": 27.759999999999998
+    "wentHome": 6,
+    "lastVolunteeredOn": "2025-04-04T09:06:10.248Z",
+    "totalTimeVolunteered": 29.659999999999997
   },
   {
     "id": 1,
     "name": "Ivan",
     "position": 7,
-    "wentHome": 2,
-    "lastVolunteeredOn": "2025-04-04T07:28:43.702Z",
-    "totalTimeVolunteered": 8.19
+    "wentHome": 3,
+    "lastVolunteeredOn": "2025-04-04T09:06:10.619Z",
+    "totalTimeVolunteered": 10.09
   }
 ]
