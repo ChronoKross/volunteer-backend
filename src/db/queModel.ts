@@ -9,6 +9,13 @@ const lockedIds = new Set<number>();
 // Timeline paths
 const timelinePath = path.join(__dirname, "timeline.json");
 
+// Ensure timeline file exists or create an empty one
+function ensureTimelineFileExists() {
+  if (!fs.existsSync(timelinePath)) {
+    fs.writeFileSync(timelinePath, JSON.stringify([])); // Create an empty array
+  }
+}
+
 export function getQueue(): Employee[] {
   const raw = fs.readFileSync(filePath, "utf-8");
   return JSON.parse(raw).sort((a: Employee, b: Employee) => a.position - b.position);
@@ -19,6 +26,7 @@ export function saveQueue(queue: Employee[]) {
 }
 
 function getTimeline() {
+  ensureTimelineFileExists(); // Ensure timeline file exists before reading
   const raw = fs.readFileSync(timelinePath, "utf-8");
   return JSON.parse(raw);
 }
@@ -65,14 +73,14 @@ export function volunteerEmployee(id: number): Employee[] | null {
 
     // Calculate hours left in shift
     let hoursVolunteered = 0;
-if (leaveTime >= shiftStart && leaveTime <= shiftEnd) {
-  const msRemaining = shiftEnd.getTime() - leaveTime.getTime();
-  hoursVolunteered = msRemaining / (1000 * 60 * 60);
-  hoursVolunteered = Math.max(0, Math.min(12, hoursVolunteered));
+    if (leaveTime >= shiftStart && leaveTime <= shiftEnd) {
+      const msRemaining = shiftEnd.getTime() - leaveTime.getTime();
+      hoursVolunteered = msRemaining / (1000 * 60 * 60);
+      hoursVolunteered = Math.max(0, Math.min(12, hoursVolunteered));
 
-  // ✅ Round to 2 decimal places
-  hoursVolunteered = Math.round(hoursVolunteered * 100) / 100;
-}
+      // ✅ Round to 2 decimal places
+      hoursVolunteered = Math.round(hoursVolunteered * 100) / 100;
+    }
 
     // Update total volunteered
     volunteer.totalTimeVolunteered = (volunteer.totalTimeVolunteered || 0) + hoursVolunteered;
@@ -87,14 +95,14 @@ if (leaveTime >= shiftStart && leaveTime <= shiftEnd) {
 
     // Add to timeline
     const timeline = getTimeline();
-   timeline.push({
-  id: Date.now(),
-  name: volunteer.name,
-  profilePic: volunteer.profilePic || "",
-  timestamp: leaveTime.toISOString(),
-  hoursVolunteered: hoursVolunteered,                        // 👈 This shift only
-  totalTimeVolunteered: volunteer.totalTimeVolunteered       // 👈 Running total
-});
+    timeline.push({
+      id: Date.now(),
+      name: volunteer.name,
+      profilePic: volunteer.profilePic || "",
+      timestamp: leaveTime.toISOString(),
+      hoursVolunteered: hoursVolunteered, // 👈 This shift only
+      totalTimeVolunteered: volunteer.totalTimeVolunteered, // 👈 Running total
+    });
     saveTimeline(timeline);
 
     return queue;
@@ -102,5 +110,3 @@ if (leaveTime >= shiftStart && leaveTime <= shiftEnd) {
     lockedIds.delete(id);
   }
 }
-
-
