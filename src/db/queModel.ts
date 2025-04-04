@@ -2,57 +2,32 @@ import fs from "fs";
 import path from "path";
 import { Employee } from "../types/types";
 
-// Define the root project directory and ensure file paths are correct
-const rootDir = process.cwd();
-const queueFilePath = path.join(rootDir, "db", "queue.json");
-const timelineFilePath = path.join(rootDir, "db", "timeline.json");
+// Queue paths + lock
+const filePath = path.join(__dirname, "queue.json");
+const lockedIds = new Set<number>();
 
-// Create directories if they don't exist
-function ensureDirectoryExists(filePath: string) {
-  const dir = path.dirname(filePath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-}
+// Timeline paths
+const timelinePath = path.join(__dirname, "timeline.json");
 
-// Ensure timeline file exists or create an empty one
-function ensureTimelineFileExists() {
-  ensureDirectoryExists(timelineFilePath);
-  if (!fs.existsSync(timelineFilePath)) {
-    fs.writeFileSync(timelineFilePath, JSON.stringify([])); // Create an empty array if file doesn't exist
-  }
-}
-
-// Get the employee queue from file
 export function getQueue(): Employee[] {
-  ensureDirectoryExists(queueFilePath); // Ensure the queue file's directory exists
-  const raw = fs.readFileSync(queueFilePath, "utf-8");
+  const raw = fs.readFileSync(filePath, "utf-8");
   return JSON.parse(raw).sort((a: Employee, b: Employee) => a.position - b.position);
 }
 
-// Save updated queue to file
 export function saveQueue(queue: Employee[]) {
-  ensureDirectoryExists(queueFilePath); // Ensure the queue file's directory exists
-  fs.writeFileSync(queueFilePath, JSON.stringify(queue, null, 2));
+  fs.writeFileSync(filePath, JSON.stringify(queue, null, 2));
 }
 
-// Get timeline data from file
 function getTimeline() {
-  ensureTimelineFileExists(); // Ensure timeline file exists before reading
-  const raw = fs.readFileSync(timelineFilePath, "utf-8");
+  const raw = fs.readFileSync(timelinePath, "utf-8");
   return JSON.parse(raw);
 }
 
-// Save timeline data to file
 function saveTimeline(timeline: any[]) {
-  ensureTimelineFileExists(); // Ensure timeline file exists before writing
-  fs.writeFileSync(timelineFilePath, JSON.stringify(timeline, null, 2));
+  fs.writeFileSync(timelinePath, JSON.stringify(timeline, null, 2));
 }
 
-// Volunteer an employee and update their record
 export function volunteerEmployee(id: number): Employee[] | null {
-  const lockedIds = new Set<number>();
-
   if (lockedIds.has(id)) {
     console.warn(`Race blocked: ID ${id} is already being updated`);
     return null;
@@ -90,19 +65,19 @@ export function volunteerEmployee(id: number): Employee[] | null {
 
     // Calculate hours left in shift
     let hoursVolunteered = 0;
-    if (leaveTime >= shiftStart && leaveTime <= shiftEnd) {
-      const msRemaining = shiftEnd.getTime() - leaveTime.getTime();
-      hoursVolunteered = msRemaining / (1000 * 60 * 60);
-      hoursVolunteered = Math.max(0, Math.min(12, hoursVolunteered));
+if (leaveTime >= shiftStart && leaveTime <= shiftEnd) {
+  const msRemaining = shiftEnd.getTime() - leaveTime.getTime();
+  hoursVolunteered = msRemaining / (1000 * 60 * 60);
+  hoursVolunteered = Math.max(0, Math.min(12, hoursVolunteered));
 
-      // ✅ Round to 2 decimal places
-      hoursVolunteered = Math.round(hoursVolunteered * 100) / 100;
-    }
+  // ✅ Round to 2 decimal places
+  hoursVolunteered = Math.round(hoursVolunteered * 100) / 100;
+}
 
-    // Update total volunteered time
+    // Update total volunteered
     volunteer.totalTimeVolunteered = (volunteer.totalTimeVolunteered || 0) + hoursVolunteered;
 
-    // Re-add to queue and reindex positions
+    // Re-add to queue and reindex
     queue.push(volunteer);
     queue.forEach((emp, idx) => {
       emp.position = idx + 1;
@@ -110,21 +85,21 @@ export function volunteerEmployee(id: number): Employee[] | null {
 
     saveQueue(queue);
 
-    // Add volunteer activity to the timeline
+    // Add to timeline
     const timeline = getTimeline();
     timeline.push({
       id: Date.now(),
       name: volunteer.name,
       profilePic: volunteer.profilePic || "",
       timestamp: leaveTime.toISOString(),
-      hoursVolunteered: hoursVolunteered, // This shift only
-      totalTimeVolunteered: volunteer.totalTimeVolunteered, // Running total
+      totalTimeVolunteered: volunteer.totalTimeVolunteered,
     });
-
     saveTimeline(timeline);
 
     return queue;
   } finally {
-    lockedIds.delete(id); // Unlock after the operation
+    lockedIds.delete(id);
   }
 }
+
+
