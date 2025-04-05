@@ -12,7 +12,7 @@ const timelinePath = path.join(__dirname, "timeline.json");
 // Ensure timeline file exists or create an empty one
 function ensureTimelineFileExists() {
   if (!fs.existsSync(timelinePath)) {
-    fs.writeFileSync(timelinePath, JSON.stringify([])); // Create an empty array if the file doesn't exist
+    fs.writeFileSync(timelinePath, JSON.stringify([]));
   }
 }
 
@@ -35,21 +35,29 @@ function saveTimeline(timeline: any[]) {
   fs.writeFileSync(timelinePath, JSON.stringify(timeline, null, 2));
 }
 
-// === Shift logic helper (fixed) ===
 function calculateNightShiftVolunteeredHours(leaveTime: Date): number {
   const shiftStart = new Date(leaveTime);
   shiftStart.setHours(19, 0, 0, 0); // 7 PM
 
-  // If before 7 AM, shift started the previous day
   if (leaveTime.getHours() < 7) {
     shiftStart.setDate(shiftStart.getDate() - 1);
   }
 
   const shiftEnd = new Date(shiftStart);
-  shiftEnd.setDate(shiftStart.getDate() + 1); // move to next day
-  shiftEnd.setHours(7, 0, 0, 0); // 7 AM next morning
+  shiftEnd.setDate(shiftStart.getDate() + 1);
+  shiftEnd.setHours(7, 0, 0, 0); // 7 AM next day
 
-  if (leaveTime < shiftStart || leaveTime > shiftEnd) return 0;
+  const outOfRange = leaveTime < shiftStart || leaveTime > shiftEnd;
+
+  // TEMP LOGGING — will show in Render logs
+  console.log({
+    leaveTime: leaveTime.toISOString(),
+    shiftStart: shiftStart.toISOString(),
+    shiftEnd: shiftEnd.toISOString(),
+    outOfRange,
+  });
+
+  if (outOfRange) return 0;
 
   const msRemaining = shiftEnd.getTime() - leaveTime.getTime();
   const hours = msRemaining / (1000 * 60 * 60);
@@ -73,14 +81,12 @@ export function volunteerEmployee(id: number): Employee[] | null {
     const [volunteer] = queue.splice(index, 1);
     const leaveTime = new Date();
 
-    // Update fields
     volunteer.lastVolunteeredOn = leaveTime.toISOString();
     volunteer.wentHome = (volunteer.wentHome || 0) + 1;
 
     const hoursVolunteered = calculateNightShiftVolunteeredHours(leaveTime);
     volunteer.totalTimeVolunteered = (volunteer.totalTimeVolunteered || 0) + hoursVolunteered;
 
-    // Re-add and reindex queue
     queue.push(volunteer);
     queue.forEach((emp, idx) => {
       emp.position = idx + 1;
@@ -88,7 +94,6 @@ export function volunteerEmployee(id: number): Employee[] | null {
 
     saveQueue(queue);
 
-    // Update timeline
     const timeline = getTimeline();
     timeline.push({
       id: Date.now(),
