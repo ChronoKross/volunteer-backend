@@ -35,34 +35,26 @@ function saveTimeline(timeline: any[]) {
   fs.writeFileSync(timelinePath, JSON.stringify(timeline, null, 2));
 }
 
-function calculateNightShiftVolunteeredHours(leaveTime: Date): number {
-  const shiftStart = new Date(leaveTime);
-  shiftStart.setHours(19, 0, 0, 0); // 7 PM
+// === Clean math-only shift logic ===
+function calculateVolunteeredHoursSimple(leaveTime: Date): number {
+  const hour = leaveTime.getHours();
+  const minutes = leaveTime.getMinutes();
+  let leaveDecimal = hour + minutes / 60;
 
-  if (leaveTime.getHours() < 7) {
-    shiftStart.setDate(shiftStart.getDate() - 1);
+  // Treat anything after midnight as 24+ hour float
+  if (leaveDecimal < 7) {
+    leaveDecimal += 24;
   }
 
-  const shiftEnd = new Date(shiftStart);
-  shiftEnd.setDate(shiftStart.getDate() + 1);
-  shiftEnd.setHours(7, 0, 0, 0); // 7 AM next day
+  const shiftStart = 19.0; // 7 PM
+  const shiftEnd = 31.0;   // 7 AM (next day)
 
-  const outOfRange = leaveTime < shiftStart || leaveTime > shiftEnd;
+  if (leaveDecimal < shiftStart || leaveDecimal > shiftEnd) {
+    return 0;
+  }
 
-  // TEMP LOGGING — will show in Render logs
-  console.log({
-    leaveTime: leaveTime.toISOString(),
-    shiftStart: shiftStart.toISOString(),
-    shiftEnd: shiftEnd.toISOString(),
-    outOfRange,
-  });
-
-  if (outOfRange) return 0;
-
-  const msRemaining = shiftEnd.getTime() - leaveTime.getTime();
-  const hours = msRemaining / (1000 * 60 * 60);
-
-  return Math.round(Math.max(0, Math.min(12, hours)) * 100) / 100;
+  const volunteered = shiftEnd - leaveDecimal;
+  return Math.round(volunteered * 100) / 100;
 }
 
 export function volunteerEmployee(id: number): Employee[] | null {
@@ -81,12 +73,14 @@ export function volunteerEmployee(id: number): Employee[] | null {
     const [volunteer] = queue.splice(index, 1);
     const leaveTime = new Date();
 
+    // Update fields
     volunteer.lastVolunteeredOn = leaveTime.toISOString();
     volunteer.wentHome = (volunteer.wentHome || 0) + 1;
 
-    const hoursVolunteered = calculateNightShiftVolunteeredHours(leaveTime);
+    const hoursVolunteered = calculateVolunteeredHoursSimple(leaveTime);
     volunteer.totalTimeVolunteered = (volunteer.totalTimeVolunteered || 0) + hoursVolunteered;
 
+    // Re-add and reindex queue
     queue.push(volunteer);
     queue.forEach((emp, idx) => {
       emp.position = idx + 1;
@@ -94,6 +88,7 @@ export function volunteerEmployee(id: number): Employee[] | null {
 
     saveQueue(queue);
 
+    // Update timeline
     const timeline = getTimeline();
     timeline.push({
       id: Date.now(),
