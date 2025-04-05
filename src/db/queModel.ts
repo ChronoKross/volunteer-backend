@@ -35,18 +35,19 @@ function saveTimeline(timeline: any[]) {
   fs.writeFileSync(timelinePath, JSON.stringify(timeline, null, 2));
 }
 
-// === Shift logic helper ===
+// === Shift logic helper (fixed) ===
 function calculateNightShiftVolunteeredHours(leaveTime: Date): number {
   const shiftStart = new Date(leaveTime);
   shiftStart.setHours(19, 0, 0, 0); // 7 PM
 
+  // If before 7 AM, shift started the previous day
   if (leaveTime.getHours() < 7) {
     shiftStart.setDate(shiftStart.getDate() - 1);
   }
 
   const shiftEnd = new Date(shiftStart);
-  shiftEnd.setDate(shiftStart.getDate() + 1);
-  shiftEnd.setHours(7, 0, 0, 0); // 7 AM next day
+  shiftEnd.setDate(shiftStart.getDate() + 1); // move to next day
+  shiftEnd.setHours(7, 0, 0, 0); // 7 AM next morning
 
   if (leaveTime < shiftStart || leaveTime > shiftEnd) return 0;
 
