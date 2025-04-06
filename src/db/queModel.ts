@@ -48,13 +48,13 @@ function lengthOfShiftInHours(start: Date, end: Date): number {
   const hours = ms / 3600000;
   return Math.max(0, Math.min(12, Math.round(hours * 100) / 100));
 }
-
-function isDuringNightShift(date: Date): boolean {
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-  const decimal = hour + minute / 60;
-  return decimal < 7 || decimal >= 19;
-}
+//needs to be fixed;
+// function isDuringNightShift(date: Date): boolean {
+//   const hour = date.getHours();
+//   const minute = date.getMinutes();
+//   const decimal = hour + minute / 60;
+//   return decimal < 7 || decimal >= 19;
+// }
 
 // === Core Volunteer Logic ===
 export function volunteerEmployee(id: number): Employee[] | null {
@@ -62,6 +62,9 @@ export function volunteerEmployee(id: number): Employee[] | null {
     console.warn(`Race blocked: ID ${id} is already being updated`);
     return null;
   }
+
+  () => console.log("volunteerEmployee called");
+  console.log("volunteerEmployee called")
 
   lockedIds.add(id);
 
@@ -73,13 +76,14 @@ export function volunteerEmployee(id: number): Employee[] | null {
     const [volunteer] = queue.splice(index, 1);
     const leaveTime = new Date();
 
-    if (isDuringNightShift(leaveTime)) {
-      console.warn(`Blocked: Employee ID ${id} attempted to leave during night shift.`);
-      return null;
-    }
+    // if (isDuringNightShift(leaveTime)) {
+    //   console.warn(`Blocked: Employee ID ${id} attempted to leave during night shift.`);
+    //   return null;
+    // }
 
     const shiftStart = getLast7pmTimestamp();
-    const hoursVolunteered = lengthOfShiftInHours(shiftStart, leaveTime);
+    const hoursVolunteered = 12 - lengthOfShiftInHours(shiftStart, leaveTime);
+    console.log(hoursVolunteered)
 
     volunteer.lastVolunteeredOn = leaveTime.toISOString();
     volunteer.wentHome = (volunteer.wentHome || 0) + 1;
