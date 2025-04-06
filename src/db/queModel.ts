@@ -2,20 +2,12 @@ import fs from "fs";
 import path from "path";
 import { Employee } from "../types/types";
 
-// Queue paths + lock
+// === Paths + Locks ===
 const filePath = path.join(__dirname, "queue.json");
+const timelinePath = path.join(__dirname, "timeline.json");
 const lockedIds = new Set<number>();
 
-// Timeline paths
-const timelinePath = path.join(__dirname, "timeline.json");
-
-// Ensure timeline file exists or create an empty one
-function ensureTimelineFileExists() {
-  if (!fs.existsSync(timelinePath)) {
-    fs.writeFileSync(timelinePath, JSON.stringify([])); // Create an empty array if the file doesn't exist
-  }
-}
-
+// === Queue Management ===
 export function getQueue(): Employee[] {
   const raw = fs.readFileSync(filePath, "utf-8");
   return JSON.parse(raw).sort((a: Employee, b: Employee) => a.position - b.position);
@@ -25,8 +17,15 @@ export function saveQueue(queue: Employee[]) {
   fs.writeFileSync(filePath, JSON.stringify(queue, null, 2));
 }
 
+// === Timeline Management ===
+function ensureTimelineFileExists() {
+  if (!fs.existsSync(timelinePath)) {
+    fs.writeFileSync(timelinePath, JSON.stringify([]));
+  }
+}
+
 function getTimeline() {
-  ensureTimelineFileExists(); // Ensure timeline file exists before reading
+  ensureTimelineFileExists();
   const raw = fs.readFileSync(timelinePath, "utf-8");
   return JSON.parse(raw);
 }
@@ -35,6 +34,29 @@ function saveTimeline(timeline: any[]) {
   fs.writeFileSync(timelinePath, JSON.stringify(timeline, null, 2));
 }
 
+// === Shift Time Helpers ===
+function getLast7pmTimestamp(): Date {
+  const now = new Date();
+  const last7pm = new Date(now);
+  last7pm.setHours(19, 0, 0, 0);
+  if (now < last7pm) last7pm.setDate(last7pm.getDate() - 1);
+  return last7pm;
+}
+
+function lengthOfShiftInHours(start: Date, end: Date): number {
+  const ms = end.getTime() - start.getTime();
+  const hours = ms / 3600000;
+  return Math.max(0, Math.min(12, Math.round(hours * 100) / 100));
+}
+
+function isDuringNightShift(date: Date): boolean {
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  const decimal = hour + minute / 60;
+  return decimal < 7 || decimal >= 19;
+}
+
+// === Core Volunteer Logic ===
 export function volunteerEmployee(id: number): Employee[] | null {
   if (lockedIds.has(id)) {
     console.warn(`Race blocked: ID ${id} is already being updated`);
@@ -51,57 +73,30 @@ export function volunteerEmployee(id: number): Employee[] | null {
     const [volunteer] = queue.splice(index, 1);
     const leaveTime = new Date();
 
-    // Update basic fields
+    if (isDuringNightShift(leaveTime)) {
+      console.warn(`Blocked: Employee ID ${id} attempted to leave during night shift.`);
+      return null;
+    }
+
+    const shiftStart = getLast7pmTimestamp();
+    const hoursVolunteered = lengthOfShiftInHours(shiftStart, leaveTime);
+
     volunteer.lastVolunteeredOn = leaveTime.toISOString();
     volunteer.wentHome = (volunteer.wentHome || 0) + 1;
-
-    // === Fix shift logic for overnight 7PM–7AM ===
-    const shiftStart = new Date(leaveTime);
-    const shiftEnd = new Date(leaveTime);
-
-    // If it's before 7AM, shift started the previous day
-    if (leaveTime.getHours() < 7) {
-      shiftStart.setDate(shiftStart.getDate() - 1);
-    }
-    shiftStart.setHours(19, 0, 0, 0); // 7:00 PM
-
-    // If it's after 7AM, shift ends tomorrow
-    if (leaveTime.getHours() >= 7) {
-      shiftEnd.setDate(shiftEnd.getDate() + 1);
-    }
-    shiftEnd.setHours(7, 0, 0, 0); // 7:00 AM
-
-    // Calculate hours left in shift
-    let hoursVolunteered = 0;
-    if (leaveTime >= shiftStart && leaveTime <= shiftEnd) {
-      const msRemaining = shiftEnd.getTime() - leaveTime.getTime();
-      hoursVolunteered = msRemaining / (1000 * 60 * 60);
-      hoursVolunteered = Math.max(0, Math.min(12, hoursVolunteered));
-
-      // ✅ Round to 2 decimal places
-      hoursVolunteered = Math.round(hoursVolunteered * 100) / 100;
-    }
-
-    // Update total volunteered
     volunteer.totalTimeVolunteered = (volunteer.totalTimeVolunteered || 0) + hoursVolunteered;
 
-    // Re-add to queue and reindex
     queue.push(volunteer);
-    queue.forEach((emp, idx) => {
-      emp.position = idx + 1;
-    });
-
+    queue.forEach((emp, idx) => (emp.position = idx + 1));
     saveQueue(queue);
 
-    // Add to timeline
     const timeline = getTimeline();
     timeline.push({
       id: Date.now(),
       name: volunteer.name,
       profilePic: volunteer.profilePic || "",
       timestamp: leaveTime.toISOString(),
-      hoursVolunteered: hoursVolunteered, // 👈 This shift only
-      totalTimeVolunteered: volunteer.totalTimeVolunteered, // 👈 Running total
+      hoursVolunteered,
+      totalTimeVolunteered: volunteer.totalTimeVolunteered,
     });
     saveTimeline(timeline);
 

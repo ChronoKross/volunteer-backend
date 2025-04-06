@@ -2,16 +2,16 @@
   {
     "id": 3,
     "name": "Ben",
-    "position": 1,
-    "wentHome": 5,
+    "position": 7,
+    "wentHome": 3,
     "lastVolunteeredOn": "2025-04-04T09:06:07.313Z",
     "totalTimeVolunteered": 16.04
   },
   {
     "id": 5,
     "name": "Kevin",
-    "position": 2,
-    "wentHome": 4,
+    "position": 5,
+    "wentHome": 2,
     "lastVolunteeredOn": "2025-04-04T09:06:08.009Z",
     "totalTimeVolunteered": 16.136121944444444
   },
@@ -19,39 +19,39 @@
     "id": 4,
     "name": "Anthony",
     "position": 3,
-    "wentHome": 7,
+    "wentHome": 1,
     "lastVolunteeredOn": "2025-04-04T09:06:08.573Z",
     "totalTimeVolunteered": 25.39
   },
   {
     "id": 6,
     "name": "Doug",
-    "position": 4,
-    "wentHome": 2,
+    "position": 2,
+    "wentHome": 1,
     "lastVolunteeredOn": "2025-04-04T09:06:09.120Z",
     "totalTimeVolunteered": 6.58
   },
   {
     "id": 2,
     "name": "Eric",
-    "position": 5,
-    "wentHome": 3,
+    "position": 4,
+    "wentHome": 1,
     "lastVolunteeredOn": "2025-04-04T09:06:09.741Z",
     "totalTimeVolunteered": 18.57
   },
   {
     "id": 7,
     "name": "Nathan",
-    "position": 6,
-    "wentHome": 6,
+    "position": 1,
+    "wentHome": 1,
     "lastVolunteeredOn": "2025-04-04T09:06:10.248Z",
     "totalTimeVolunteered": 29.659999999999997
   },
   {
     "id": 1,
     "name": "Ivan",
-    "position": 7,
-    "wentHome": 3,
+    "position": 6,
+    "wentHome": 2,
     "lastVolunteeredOn": "2025-04-04T09:06:10.619Z",
     "totalTimeVolunteered": 10.09
   }
