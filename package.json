@@ -7,7 +7,6 @@
     "dev": "ts-node-dev --respawn src/index.ts",
     "build": "tsc && cp src/db/queue.json dist/db/queue.json && cp src/db/timeline.json dist/db/timeline.json",
     "start": "node dist/index.js"
-
   },
   "repository": {
     "type": "git",
@@ -23,6 +22,7 @@
   },
   "homepage": "https://github.com/ChronoKross/quenifi-backend#readme",
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.4",
     "cors": "^2.8.5",
     "express": "^4.21.2"
   },

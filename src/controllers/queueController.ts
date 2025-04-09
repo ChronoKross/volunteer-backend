@@ -2,15 +2,14 @@ import { Request, Response } from "express";
 import { volunteerEmployee, getQueue } from "../db/queModel";
 
 export function updateQueueController(req: Request, res: Response): void {
-  const { id } = req.body;
-  
+  const { id, hoursVolunteered } = req.body;
 
-  if (typeof id !== "number") {
-    res.status(400).json({ message: "Invalid or missing ID" });
+  if (typeof id !== "number" || typeof hoursVolunteered !== "number") {
+    res.status(400).json({ message: "Invalid or missing data" });
     return;
   }
 
-  const updatedQueue = volunteerEmployee(id);
+  const updatedQueue = volunteerEmployee(id, hoursVolunteered);
 
   if (!updatedQueue) {
     res.status(404).json({ message: "Employee not found" });
